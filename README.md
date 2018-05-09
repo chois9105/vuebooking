@@ -1,6 +1,6 @@
 # vuebooking
 
-> A Vue.js project
+> A hotel booking website.
 
 ## Build Setup
 
