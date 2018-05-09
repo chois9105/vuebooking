@@ -7,6 +7,8 @@
                   <el-date-picker
                     v-model="dateTime"
                     type="date"
+                    :picker-options="pickerOptions"
+                    @change="handleTimeChange"
                   ></el-date-picker>
               </div>
               <el-card v-for="(timeInfo, index) in timeInfos" :key="index" class="timeinfo">
@@ -19,7 +21,6 @@
     </el-tabs>
 </template>
 <script>
-
 export default {
   data() {
       return {
@@ -85,6 +86,11 @@ export default {
                   content: '提示信息'
               }
           ],
+          pickerOptions: {
+              disabledDate:(time) => {
+                  return time.getTime() > Date.now() + 26*24*3600*1000
+              }
+          },
           roomId: "401",
           dateTime: new Date()
       }
@@ -92,6 +98,9 @@ export default {
   methods: {
       handleRoomChange(tab){
           this.roomId = tab.name
+      },
+      handleTimeChange(time){
+          console.log("选择时间时执行的函数")
       }
   }
 }
