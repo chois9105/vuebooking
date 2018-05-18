@@ -1,4 +1,4 @@
 export default {
-    login: 'login/',
-    booking: 'booking/'
+    login: 'api/login/',
+    booking: 'api/booking/'
 }
