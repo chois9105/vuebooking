@@ -182,18 +182,20 @@ export default {
         });
       },
       getTimeInfo (){
+        let date = this.date
+
         let params = {
           available_room: this.roomId,
-          available_day : this.date
+          available_day : date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2, '00')+'-'+date.getDate()
         }
-        this.$http.get(api.booking, params).then(res => {
+        this.$http.get(api.booking, {params}).then(res => {
           // 处理booking的返回数据
-          res.forEach(element => {
+          res.data.forEach(element => {
             // 把预定时间段的type设置为info,content设置为“已預訂”并显示预定人的名字
             let timeInfo = this.timeInfos.find(v => v.value === element.booking_time)
-            timeInfo.type = 'success'
+            timeInfo.type = 'info'
             timeInfo.content = '已預訂<br>預訂人：'+ element.booking_user.name
-          });
+          })
         })
       }
   },
