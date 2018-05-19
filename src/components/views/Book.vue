@@ -213,7 +213,6 @@ export default {
       }
       this.$http.get(api.booking, { params }).then(res => {
         // 处理booking的返回数据
-        console.log(res.data)
         res.data.forEach(element => {
           // 把预定时间段的type设置为info,content设置为“已預訂”并显示预定人的名字
           let timeInfo = this.timeInfos.find(
