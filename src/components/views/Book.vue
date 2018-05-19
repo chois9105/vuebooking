@@ -201,8 +201,19 @@ export default {
           let timeInfo = this.timeInfos.find(
             v => v.value === element.booking_time
           )
-          timeInfo.type = 'info'
-          timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name
+          if (element.status === 'reserved') {
+              timeInfo.type = 'info'
+              timeInfo.content = '已預訂<br>預訂人：'+ element.booking_user.name
+            } else if (element.status === 'cancelled') {
+              timeInfo.type = 'warning'
+              timeInfo.content = '已取消<br>預訂人：'+ element.booking_user.name
+            } else if (element.status === 'show') {
+              timeInfo.type = 'info'
+              timeInfo.content = '已使用<br>預訂人：'+ element.booking_user.name
+            } else if (element.status === 'no_show') {
+              timeInfo.type = 'danger'
+              timeInfo.content = '缺席<br>預訂人：'+ element.booking_user.name
+            }
         })
       })
     }
