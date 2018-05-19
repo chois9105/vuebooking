@@ -2,12 +2,14 @@ import Axios from 'axios'
 let token = localStorage.token
 var axios = Axios.create({
   // baseURL: 'https://some-domain.com/api/',
-  timeout: 1000,
-  headers: {'Authorization': `JWT ${token}`}
 })
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
+  config = {
+    timeout: 1000,
+    headers: {'Authorization': `JWT ${token}`}
+  }
   // 在发送请求之前做些什么
   return config
 }, function (error) {
