@@ -17,7 +17,7 @@
                 <el-col :span="12" :offset="6">
                     <el-form :model="loginForm" :rules="rules" label-width="80px">
                         <el-form-item label="FBO ID" prop="username">
-                            <el-input v-model="loginForm.username"></el-input>    
+                            <el-input v-model="loginForm.username"></el-input>
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
                             <el-input type="password" v-model="loginForm.password"></el-input>
@@ -40,46 +40,46 @@
 <script>
 import api from '@/utils/api'
 export default {
-    data() {
-        return { 
-            loginForm: {
-                username: '',
-                password: '',
-                userError: ''
-            },
-            rules:{
-                username:[
-                    { required: true, message:'请输入FBO ID', trigger: 'blur' },
-                    { min:12, max:12, message:'请输入长度为12位的FBO ID', trigger: 'blur' },
-                    { pattern: /^852\d{9}$/, message:'请输入正确的FBO ID', trigger: 'blur' }
-                ],
-                password:[
-                    { required: true, message:'请输入密码', trigger: 'blur' },
-                    { min:6, max:16, message:'请输入长度在6-8位的密码', trigger: 'blur'}
-                ]
-            }
-        }
-    },
-    methods: {
-        onSubmit() {
-            const params = {
-                username: this.loginForm.username,
-                password: this.loginForm.password
-            }
-            if(params.username && params.password){
-                this.$http.post(api.login, params).then(res => {
-                //登录成功
-                if(res.data.token){
-                    localStorage.token = res.data.token
-                }
-                this.$router.push({ name: 'home'})
-                }).catch(function (error) {
-                    if("non_field_errors" in error){
-                        that.loginForm.userError = error.non_field_errors[0];
-                    }
-                })
-            }
-        }
+  data () {
+    return {
+      loginForm: {
+        username: '',
+        password: '',
+        userError: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入FBO ID', trigger: 'blur' },
+          { min: 12, max: 12, message: '请输入长度为12位的FBO ID', trigger: 'blur' },
+          { pattern: /^852\d{9}$/, message: '请输入正确的FBO ID', trigger: 'blur' }
+        ],
+        password: [
+          {required: true, message: '请输入密码', trigger: 'blur'},
+          {min: 6, max: 16, message: '请输入长度在6-8位的密码', trigger: 'blur'}
+        ]
+      }
     }
+  },
+  methods: {
+    onSubmit () {
+      const params = {
+        username: this.loginForm.username,
+        password: this.loginForm.password
+      }
+      if (params.username && params.password) {
+        this.$http.post(api.login, params).then(res => {
+        // 登录成功
+          if (res.data.token) {
+            localStorage.token = res.data.token
+          }
+          this.$router.push({name: 'home'})
+        }).catch(function (error) {
+          if ('non_field_errors' in error) {
+            this.loginForm.userError = error.non_field_errors[0]
+          }
+        })
+      }
+    }
+  }
 }
 </script>

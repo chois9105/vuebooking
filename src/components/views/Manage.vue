@@ -21,66 +21,62 @@
 </template>
 
 <script>
-    export default {
-    data() {
-      return {
-        tableData: [{
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }, {
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }, {
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }, {
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }]
-      }
-    },
-    methods: {
-      confirm() {
-        const h = this.$createElement;
-        this.$msgbox({
-          title: '確認取消該預定？',
-          message: h('p', null, [
-            h('span', null, ' 2018-5-11  '),
-            h('span', null, ' 10:00 - 12:00  '),
-            h('i', { style: 'color: teal' }, '  大型會議室A')
-          ]),
-          showCancelButton: true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-              instance.confirmButtonLoading = true;
-              instance.confirmButtonText = '执行中...';
+export default {
+  data () {
+    return {
+      tableData: [{
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }, {
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }, {
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }, {
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }]
+    }
+  },
+  methods: {
+    confirm () {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '確認取消該預定？',
+        message: h('p', null, [
+          h('span', null, ' 2018-5-11  '),
+          h('span', null, ' 10:00 - 12:00  '),
+          h('i', { style: 'color: teal' }, '  大型會議室A')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            setTimeout(() => {
+              done()
               setTimeout(() => {
-                done();
-                setTimeout(() => {
-                  instance.confirmButtonLoading = false;
-                }, 300);
-              }, 3000);
-            } else {
-              done();
-            }
+                instance.confirmButtonLoading = false
+              }, 300)
+            }, 3000)
+          } else {
+            done()
           }
-        }).then(action => {
-          this.$message({
-            type: 'info',
-            message: 'action: ' + action
-          });
-        });
-      }
+        }
+      }).then(action => {
+        this.$message({
+          type: 'info',
+          message: 'action: ' + action
+        })
+      })
     }
   }
+}
 </script>
-
-<style>
-
-</style>

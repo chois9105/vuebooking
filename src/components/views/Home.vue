@@ -43,11 +43,11 @@
 
 <script>
 export default {
-    data() {
-      return {
-        isRoute :true
-      }
+  data () {
+    return {
+      isRoute: true
     }
+  }
 }
 </script>
 
@@ -82,5 +82,3 @@ export default {
     margin-bottom: 40px;
   }
 </style>
-
-

@@ -31,18 +31,17 @@
 </script>
 
 <style>
-.el-row{
+.el-row {
   margin-bottom: 20px;
 }
-
 .bg-purple {
-    background: #d3dce6;
+  background: #d3dce6;
 }
-
-.el-header, .el-footer {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
+.el-header,
+.el-footer {
+  background-color: #e9eef3;
+  color: #333;
+  text-align: center;
+  line-height: 60px;
 }
 </style>

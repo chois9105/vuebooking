@@ -16,39 +16,35 @@
 </template>
 
 <script>
-    export default {
-    data() {
-      return {
-        tableData: [{
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }, {
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }, {
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }, {
-          date: '2016-05-02',
-          time: '10:00 - 12:00',
-          room: '大型会议室A'
-        }]
-      }
+export default {
+  data () {
+    return {
+      tableData: [{
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }, {
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }, {
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }, {
+        date: '2016-05-02',
+        time: '10:00 - 12:00',
+        room: '大型会议室A'
+      }]
+    }
+  },
+  methods: {
+    handleEdit (index, row) {
+      console.log(index, row)
     },
-    methods: {
-      handleEdit(index, row) {
-        console.log(index, row);
-      },
-      handleDelete(index, row) {
-        console.log(index, row);
-      }
+    handleDelete (index, row) {
+      console.log(index, row)
     }
   }
+}
 </script>
-
-<style>
-
-</style>
