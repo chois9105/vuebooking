@@ -69,8 +69,10 @@ export default {
       if (params.username && params.password) {
         this.$http.post(api.login, params).then(res => {
         // 登录成功
+          console.log(res.data)
           if (res.data.token) {
             localStorage.token = res.data.token
+            console.log('token is storaged')
           }
           this.$router.push({name: 'home'})
         }).catch(function (error) {

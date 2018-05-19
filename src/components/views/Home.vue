@@ -8,13 +8,13 @@
                       placement="bottom"
                       width="200"
                       style="float: right;">
-                      <p>FBO ID：852000838349</p>
-                      <p>Current Token: 18</p>
-                      <p>Next Token: 18</p>
+                      <p>FBO ID：{{fbo_id}}</p>
+                      <p>Current Token: {{current_token}}</p>
+                      <p>Next Token: {{next_token}}</p>
                       <div style="text-align: right; margin: 0">
                         <el-button type="primary" size="mini">退出</el-button>
                       </div>
-                      <el-button slot="reference" size="medium" round>Vincent</el-button>
+                      <el-button slot="reference" size="medium" round>{{name}}</el-button>
                     </el-popover>
                 </el-col>
             </el-row>
@@ -42,11 +42,31 @@
 </template>
 
 <script>
+import api from '@/utils/api'
 export default {
   data () {
     return {
-      isRoute: true
+      isRoute: true,
+      name: '',
+      fbo_id: '',
+      current_token: '',
+      next_token: '',
+      level: ''
     }
+  },
+  methods: {
+    getuserInfo () {
+      this.$http.get(api.user_detail).then(res => {
+        this.name = res.data.name
+        this.fbo_id = res.data.name
+        this.current_token = res.data.token_current
+        this.next_token = res.data.token_next
+        this.level = res.data.level
+      })
+    }
+  },
+  mounted () {
+    this.getuserInfo()
   }
 }
 </script>
