@@ -12,7 +12,7 @@
                       <p>Current Token: {{current_token}}</p>
                       <p>Next Token: {{next_token}}</p>
                       <div style="text-align: right; margin: 0">
-                        <el-button type="primary" size="mini">退出</el-button>
+                        <el-button type="primary" size="mini" @click="logout">退出</el-button>
                       </div>
                       <el-button slot="reference" size="medium" round>{{name}}</el-button>
                     </el-popover>
@@ -63,6 +63,10 @@ export default {
         this.next_token = res.data.token_next
         this.level = res.data.level
       })
+    },
+    logout () {
+      localStorage.clear()
+      this.$router.push({name: 'login'})
     }
   },
   mounted () {
