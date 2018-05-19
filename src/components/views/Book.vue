@@ -182,6 +182,11 @@ export default {
       })
     },
     getTimeInfo () {
+      // 初始化时间信息
+      this.timeInfos.forEach(v => {
+        v.type = 'success'
+        v.content = '可預訂'
+      })
       let date = this.date
 
       let params = {
@@ -202,7 +207,15 @@ export default {
             v => v.value === element.booking_time
           )
           timeInfo.type = 'info'
-          timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name
+          // A房
+          if (this.roomId === 1) {
+            timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name + '<br>该房需15人以上方可预订'
+          } else if (this.roomId === 7) {
+            // G 房
+            timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name + '<br>该房只限2.5K环球年会得主租用'
+          } else {
+            timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name
+          }
         })
       })
     }
