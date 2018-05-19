@@ -4,6 +4,8 @@
           <el-card class="box-card">
               <div slot="header">
                   <div>{{roomNow}}</div>
+                  <p v-show="a_requirement">该房只限15人以上活动预订</p>
+                  <p v-show="g_requirement">该房只限2.5K环球年会得主租用</p>
                   <el-date-picker
                     v-model="date"
                     type="date"
@@ -139,6 +141,18 @@ export default {
   computed: {
     roomNow () {
       return this.rooms.find(v => v.id === this.roomId).info
+    },
+    a_requirement () {
+      if (this.roomId === '1') {
+        return true
+      }
+      return false
+    },
+    g_requirement () {
+      if (this.roomId === '7') {
+        return true
+      }
+      return false
     }
   },
   methods: {
@@ -182,8 +196,12 @@ export default {
       })
     },
     getTimeInfo () {
+      // 初始化时间信息
+      this.timeInfos.forEach(v => {
+        v.type = 'success'
+        v.content = '可預訂'
+      })
       let date = this.date
-
       let params = {
         booked_room: this.roomId,
         booked_day:
