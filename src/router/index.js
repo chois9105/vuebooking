@@ -16,26 +16,26 @@ export default new Router({
       component: Login
     },
     {
-        path: '/home',
-        name: 'home',
-        component: Home,
-        children: [
-            {
-                path: '/book',
-                name: 'book',
-                component: Book
-            },
-            {
-                path: '/manage',
-                name: 'manage',
-                component: Manage
-            },
-            {
-                path: '/history',
-                name: 'history',
-                component: history
-            }
-        ]
+      path: '/home',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: '/book',
+          name: 'book',
+          component: Book
+        },
+        {
+          path: '/manage',
+          name: 'manage',
+          component: Manage
+        },
+        {
+          path: '/history',
+          name: 'history',
+          component: history
+        }
+      ]
     }
   ],
   mode: 'history'
