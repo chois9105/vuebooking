@@ -17,8 +17,8 @@
                 <el-col :span="4" v-for="(timeInfo, index) in timeInfos" :key="index">
                   <el-tooltip class="item" effect="light" placement="bottom">
                     <div slot="content" v-html="timeInfo.content"></div>
-                    <el-button :type="timeInfo.type" :disabled="g_disabled" @click="handleTimeChange(timeInfo.time, timeInfo.value)">
-                      {{timeInfo.time}}</el-button>
+                    <div><el-button :type="timeInfo.type" :disabled="g_disabled" @click="handleTimeChange(timeInfo.time, timeInfo.value)">
+                      {{timeInfo.time}}</el-button></div>
                   </el-tooltip>
                 </el-col>
               </el-row>
@@ -205,8 +205,8 @@ export default {
               done()
               setTimeout(() => {
                 instance.confirmButtonLoading = false
-              }, 300)
-            }, 1500)
+              }, 200)
+            }, 1000)
           } else {
             done()
           }
@@ -235,8 +235,8 @@ export default {
             }).catch(err => {
               console.log(err)
               this.$message({
-                type: 'danger',
-                message: '预订失败！'
+                type: 'error',
+                message: '预订失败,目前该房已被预订'
               })
             })
           } else {
@@ -263,8 +263,8 @@ export default {
             }).catch(err => {
               console.log(err)
               this.$message({
-                type: 'danger',
-                message: '预订失败！'
+                type: 'error',
+                message: '预订失败,目前该房已被预订'
               })
             })
           } else {
@@ -301,18 +301,15 @@ export default {
           )
           if (element.status === 'reserved') {
             timeInfo.type = 'info'
-            timeInfo.disabled = true
             timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'cancelled') {
             timeInfo.type = 'warning'
             timeInfo.content = '已取消<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'show') {
             timeInfo.type = 'info'
-            timeInfo.disabled = true
             timeInfo.content = '已使用<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'no_show') {
             timeInfo.type = 'danger'
-            timeInfo.disabled = true
             timeInfo.content = '缺席<br>預訂人：' + element.booking_user.name
           }
         })
