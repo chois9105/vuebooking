@@ -43,25 +43,29 @@
 
 <script>
 import api from '@/utils/api'
+import {mapState, mapActions} from 'vuex'
 export default {
   data () {
     return {
       isRoute: true,
       name: '',
-      fbo_id: '',
-      current_token: '',
-      next_token: '',
-      level: ''
+      fbo_id: ''
     }
   },
+  computed: {
+    ...mapState('user', ['current_token', 'next_token', 'level'])
+  },
   methods: {
+    ...mapActions('user', ['changeUserInfo']),
     getuserInfo () {
       this.$http.get(api.user_detail).then(res => {
         this.name = res.data.name
         this.fbo_id = res.data.name
-        this.current_token = res.data.token_current
-        this.next_token = res.data.token_next
-        this.level = res.data.level
+        this.changeUserInfo({
+          current_token: res.data.token_current,
+          next_token: res.data.token_next,
+          level: res.data.level
+        })
       })
     },
     logout () {
