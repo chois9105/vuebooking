@@ -10,14 +10,15 @@
                     v-model="date"
                     type="date"
                     :picker-options="pickerOptions"
-                    @change="handleTimeChange"
+                    @change="handleDateChange"
                   ></el-date-picker>
               </div>
               <el-row :gutter="20">
                 <el-col :span="4" v-for="(timeInfo, index) in timeInfos" :key="index">
                   <el-tooltip class="item" effect="light" placement="bottom">
                     <div slot="content" v-html="timeInfo.content"></div>
-                    <el-button :type="timeInfo.type">{{timeInfo.time}}</el-button>
+                    <el-button :type="timeInfo.type" :disabled="g_disabled" @click="handleTimeChange(timeInfo.time, timeInfo.value)">
+                      {{timeInfo.time}}</el-button>
                   </el-tooltip>
                 </el-col>
               </el-row>
@@ -33,6 +34,7 @@
 
 <script>
 import api from '@/utils/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -134,11 +136,13 @@ export default {
       // 时间
       date: new Date(),
       // 房间id
-      roomId: '1'
-      // 用户名
+      roomId: '1',
+      selected_time: '',
+      selected_time_value: ''
     }
   },
   computed: {
+    ...mapState('user', ['current_token', 'next_token', 'level']),
     roomNow () {
       return this.rooms.find(v => v.id === this.roomId).info
     },
@@ -153,23 +157,42 @@ export default {
         return true
       }
       return false
+    },
+    g_disabled () {
+      if (this.roomId === '7') {
+        if (this.level === '5') {
+          return false
+        } else {
+          return true
+        }
+      }
+      return false
     }
   },
   methods: {
     handleRoomChange (tab) {
       this.getTimeInfo()
     },
-    handleTimeChange (time) {
+    handleDateChange (time) {
       this.getTimeInfo()
     },
+    handleTimeChange (time, value) {
+      this.selected_time = time
+      this.selected_time_value = value
+    },
     confirm () {
+      var date = this.date.getFullYear() +
+                '-' +
+                String(this.date.getMonth() + 1).padStart(2, '00') +
+                '-' +
+                this.date.getDate()
       const h = this.$createElement
       this.$msgbox({
         title: '確認預定信息',
         message: h('p', null, [
-          h('span', null, ' 2018-5-11  '),
-          h('span', null, ' 10:00 - 12:00  '),
-          h('i', { style: 'color: teal' }, '  大型會議室A')
+          h('span', null, ' ' + date + '  '),
+          h('span', null, ' ' + this.selected_time + '  '),
+          h('i', { style: 'color: teal' }, '  ' + this.rooms.find(v => v.id === this.roomId).info)
         ]),
         showCancelButton: true,
         confirmButtonText: '确定',
@@ -183,16 +206,74 @@ export default {
               setTimeout(() => {
                 instance.confirmButtonLoading = false
               }, 300)
-            }, 3000)
+            }, 1500)
           } else {
             done()
           }
         }
       }).then(action => {
-        this.$message({
-          type: 'info',
-          message: 'action: ' + action
-        })
+        var bookingId = this.date.getFullYear() +
+                        String(this.date.getMonth() + 1).padStart(2, '00') +
+                        this.date.getDate() +
+                        this.roomId +
+                        this.selected_time_value
+        if (parseInt(date.split('-')[1]) === new Date().getMonth() + 1) {
+          if (this.current_token > 0) {
+            let params = {
+              booking_room: this.roomId,
+              booking_day: date,
+              booking_time: this.selected_time_value,
+              reference_id: bookingId,
+              is_current_month: true
+            }
+            this.$http.post(api.user_booking, params).then(res => {
+              console.log(res)
+              this.$message({
+                type: 'success',
+                message: '预订成功！'
+              })
+            }).catch(err => {
+              console.log(err)
+              this.$message({
+                type: 'danger',
+                message: '预订失败！'
+              })
+            })
+          } else {
+            this.$message({
+              type: 'waring',
+              message: '预订失败,当前月代币不足'
+            })
+          }
+        } else {
+          if (this.next_token > 0) {
+            let params = {
+              booking_room: this.roomId,
+              booking_day: date,
+              booking_time: this.selected_time_value,
+              reference_id: bookingId,
+              is_current_month: false
+            }
+            this.$http.post(api.user_booking, params).then(res => {
+              console.log(res)
+              this.$message({
+                type: 'success',
+                message: '预订成功！'
+              })
+            }).catch(err => {
+              console.log(err)
+              this.$message({
+                type: 'danger',
+                message: '预订失败！'
+              })
+            })
+          } else {
+            this.$message({
+              type: 'waring',
+              message: '预订失败,下月代币不足'
+            })
+          }
+        }
       })
     },
     getTimeInfo () {
@@ -220,15 +301,18 @@ export default {
           )
           if (element.status === 'reserved') {
             timeInfo.type = 'info'
+            timeInfo.disabled = true
             timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'cancelled') {
             timeInfo.type = 'warning'
             timeInfo.content = '已取消<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'show') {
             timeInfo.type = 'info'
+            timeInfo.disabled = true
             timeInfo.content = '已使用<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'no_show') {
             timeInfo.type = 'danger'
+            timeInfo.disabled = true
             timeInfo.content = '缺席<br>預訂人：' + element.booking_user.name
           }
         })

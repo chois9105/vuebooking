@@ -60,7 +60,7 @@ export default {
     getuserInfo () {
       this.$http.get(api.user_detail).then(res => {
         this.name = res.data.name
-        this.fbo_id = res.data.name
+        this.fbo_id = res.data.fbo_id
         this.changeUserInfo({
           current_token: res.data.token_current,
           next_token: res.data.token_next,
