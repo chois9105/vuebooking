@@ -17,7 +17,7 @@
                 <el-col :span="4" v-for="(timeInfo, index) in timeInfos" :key="index">
                   <el-tooltip class="item" effect="light" placement="bottom">
                     <div slot="content" v-html="timeInfo.content"></div>
-                    <div><el-button :type="timeInfo.type" :disabled="g_disabled" @click="handleTimeChange(timeInfo.time, timeInfo.value)">
+                    <div><el-button :type="timeInfo.type" :disabled="timeInfo.a_disabled" @click="handleTimeChange(timeInfo.time, timeInfo.value)">
                       {{timeInfo.time}}</el-button></div>
                   </el-tooltip>
                 </el-col>
@@ -95,37 +95,43 @@ export default {
           value: 'A',
           time: '10:00 - 12:00',
           type: 'success',
-          content: '可預訂'
+          content: '可預訂',
+          a_disabled: false
         },
         {
           value: 'B',
           time: '12:00 - 14:00',
           type: 'success',
-          content: '可預訂'
+          content: '可預訂',
+          a_disabled: false
         },
         {
           value: 'C',
           time: '14:00 - 16:00',
           type: 'success',
-          content: '可預訂'
+          content: '可預訂',
+          a_disabled: false
         },
         {
           value: 'D',
           time: '16:00 - 18:00',
           type: 'success',
-          content: '可預訂'
+          content: '可預訂',
+          a_disabled: false
         },
         {
           value: 'E',
           time: '18:00 - 20:00',
           type: 'success',
-          content: '可預訂'
+          content: '可預訂',
+          a_disabled: false
         },
         {
           value: 'F',
           time: '20:00 - 22:00',
           type: 'success',
-          content: '可預訂'
+          content: '可預訂',
+          a_disabled: false
         }
       ],
       pickerOptions: {
@@ -293,6 +299,10 @@ export default {
           date.getDate()
       }
       this.$http.get(api.booking, { params }).then(res => {
+        // 初始化每个按钮的可选状态
+        this.timeInfos.forEach(time => {
+          time.a_disabled = false
+        })
         // 处理booking的返回数据
         res.data.forEach(element => {
           // 把预定时间段的type设置为info,content设置为“已預訂”并显示预定人的名字
@@ -301,18 +311,29 @@ export default {
           )
           if (element.status === 'reserved') {
             timeInfo.type = 'info'
+            timeInfo.a_disabled = true
             timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'cancelled') {
             timeInfo.type = 'warning'
             timeInfo.content = '已取消<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'show') {
             timeInfo.type = 'info'
+            timeInfo.a_disabled = true
             timeInfo.content = '已使用<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'no_show') {
             timeInfo.type = 'danger'
+            timeInfo.a_disabled = true
             timeInfo.content = '缺席<br>預訂人：' + element.booking_user.name
           }
         })
+        // 如果是G房，小于5的用户全部不可选
+        if (this.roomId === '7') {
+          if (this.level !== '5') {
+            this.timeInfos.forEach(time => {
+              time.a_disabled = true
+            })
+          }
+        }
       })
     }
   },
