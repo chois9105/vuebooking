@@ -30,6 +30,7 @@
 
 <script>
 import api from '@/utils/api'
+import {mapState, mapActions} from 'vuex'
 export default {
   data () {
     return {
@@ -37,7 +38,11 @@ export default {
       c_disabled: false
     }
   },
+  computed: {
+    ...mapState('user', ['current_token', 'next_token', 'level'])
+  },
   methods: {
+    ...mapActions('user', ['addCurrentToken', 'addNextToken']),
     cancel (row) {
       const h = this.$createElement
       this.$msgbox({
@@ -109,19 +114,20 @@ export default {
                 reference_id: row.referenceId,
                 is_current_month: true
               }
+              this.addCurrentToken(1)
             } else {
               params = {
                 status: 'cancelled',
                 reference_id: row.referenceId,
                 is_current_month: false
               }
+              this.addNextToken(1)
             }
             this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
               this.$message({
                 type: 'success',
                 message: '取消成功'
               })
-              //
             }).catch(err => {
               console.log(err)
               this.$message({
@@ -136,7 +142,7 @@ export default {
             })
           }
         } else {
-          // 判断该预订日期是否当前月
+          // 如果不是当天就不需要判断大于两小时
           if (parseInt(row.date.split('-')[1]) === new Date().getMonth() + 1) {
             params = {
               status: 'cancelled',

@@ -34,7 +34,7 @@
 
 <script>
 import api from '@/utils/api'
-import {mapState} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 export default {
   data () {
     return {
@@ -167,6 +167,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', ['minusCurrentToken', 'minusNextToken']),
     handleRoomChange (tab) {
       this.getTimeInfo()
     },
@@ -226,6 +227,7 @@ export default {
             }
             this.$http.post(api.user_booking, params).then(res => {
               console.log(res)
+              this.minusCurrentToken(1)
               this.$message({
                 type: 'success',
                 message: '预订成功！'
@@ -254,6 +256,7 @@ export default {
             }
             this.$http.post(api.user_booking, params).then(res => {
               console.log(res)
+              this.minusNextToken(1)
               this.$message({
                 type: 'success',
                 message: '预订成功！'
