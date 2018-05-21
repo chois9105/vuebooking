@@ -93,10 +93,52 @@ export default {
         } else if (row.timeLabel === 'E') {
           bookTime = 19
         }
-        if (hourNow < bookTime || (hourNow === 10 && minuteNow < 30)) {
+        // 如果是当天的取消操作，则需要判定取消的预订是否大于2小时
+        var choseDay = row.date
+        var today = new Date().getFullYear() +
+                    '-' +
+                    String(new Date().getMonth() + 1).padStart(2, '00') +
+                    '-' +
+                    new Date().getDate()
+        if (choseDay === today) {
+          if (hourNow < bookTime || (hourNow === 10 && minuteNow < 30)) {
+            // 判断该预订日期是否当前月
+            if (parseInt(row.date.split('-')[1]) === new Date().getMonth() + 1) {
+              var params = {
+                status: 'cancelled',
+                reference_id: row.referenceId,
+                is_current_month: true
+              }
+            } else {
+              params = {
+                status: 'cancelled',
+                reference_id: row.referenceId,
+                is_current_month: false
+              }
+            }
+            this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
+              this.$message({
+                type: 'success',
+                message: '取消成功'
+              })
+              //
+            }).catch(err => {
+              console.log(err)
+              this.$message({
+                type: 'error',
+                message: '取消失败'
+              })
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: '现在不可取消'
+            })
+          }
+        } else {
           // 判断该预订日期是否当前月
           if (parseInt(row.date.split('-')[1]) === new Date().getMonth() + 1) {
-            var params = {
+            params = {
               status: 'cancelled',
               reference_id: row.referenceId,
               is_current_month: true
@@ -109,7 +151,6 @@ export default {
             }
           }
           this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
-            this.getUserBooking()
             this.$message({
               type: 'success',
               message: '取消成功'
@@ -121,11 +162,6 @@ export default {
               type: 'error',
               message: '取消失败'
             })
-          })
-        } else {
-          this.$message({
-            type: 'error',
-            message: '现在不可取消'
           })
         }
       })
