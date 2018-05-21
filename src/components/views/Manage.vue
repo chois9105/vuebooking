@@ -66,9 +66,35 @@ export default {
         }
       }).then(action => {
         let hourNow = new Date().getHours() + 2
+        let minuteNow = new Date().getMinutes
         // 这里还需要加一段逻辑，用于判定预订的时间段
-        // 判断该预订日期是否当前月
-        if (hourNow < 26) {
+        if (row.timeLabel === 'A') {
+          if (row.weekDay === 6) {
+            var bookTime = 11
+          } else if (row.weekDay === 0) {
+            bookTime = 12
+          } else {
+            bookTime = 10
+          }
+        } else if (row.timeLabel === 'B') {
+          if (row.weekDay === 0) {
+            bookTime = 14
+          } else {
+            bookTime = 13
+          }
+        } else if (row.timeLabel === 'C') {
+          if (row.weekDay === 0) {
+            bookTime = 16
+          } else {
+            bookTime = 15
+          }
+        } else if (row.timeLabel === 'D') {
+          bookTime = 17
+        } else if (row.timeLabel === 'E') {
+          bookTime = 19
+        }
+        if (hourNow < bookTime || (hourNow === 10 && minuteNow < 30)) {
+          // 判断该预订日期是否当前月
           if (parseInt(row.date.split('-')[1]) === new Date().getMonth() + 1) {
             var params = {
               status: 'cancelled',
@@ -116,6 +142,7 @@ export default {
           let roomId = element.booking_room.id
           let referenceId = element.reference_id
           let timeLabel = element.booking_time
+          let weekDay = element.booking_weekday
           // 根据预订的时间段显示
           if (element.booking_time === 'A') {
             var time = '10:00 - 12:00'
@@ -136,7 +163,8 @@ export default {
             room,
             roomId,
             referenceId,
-            timeLabel
+            timeLabel,
+            weekDay
           })
         })
       })

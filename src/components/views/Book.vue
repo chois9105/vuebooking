@@ -220,6 +220,7 @@ export default {
               booking_room: this.roomId,
               booking_day: date,
               booking_time: this.selected_time_value,
+              booking_weekday: this.date.getDay(),
               reference_id: bookingId,
               is_current_month: true
             }
@@ -298,9 +299,6 @@ export default {
           date.getDate()
       }
       this.$http.get(api.booking, { params }).then(res => {
-        // 初始化每个按钮的可选状态
-        // this.timeInfos.forEach(time => {
-        // })
         // 处理booking的返回数据
         res.data.forEach(element => {
           // 把预定时间段的type设置为info,content设置为“已預訂”并显示预定人的名字
@@ -370,6 +368,68 @@ export default {
           }
         }
         // 当前已过时间不可选
+        var choseDay = date.getFullYear() +
+                      String(date.getMonth() + 1).padStart(2, '00') +
+                      date.getDate()
+        var today = new Date().getFullYear() +
+                    String(new Date().getMonth() + 1).padStart(2, '00') +
+                    new Date().getDate()
+        if (choseDay === today) {
+          this.timeInfos.forEach(time => {
+            if (time.value === 'A') {
+              if (new Date().getDay() === 6) {
+                if (new Date().getHours() >= 11) {
+                  time.a_disabled = true
+                  time.content = '时间段已过'
+                }
+              } else if (new Date().getDay() === 0) {
+                if (new Date().getHours() >= 12) {
+                  time.a_disabled = true
+                  time.content = '时间段已过'
+                }
+              } else {
+                if (new Date().getHours() > 10 || (new Date().getHours() === 10 && new Date().getMinutes >= 30)) {
+                  time.a_disabled = true
+                  time.content = '时间段已过'
+                }
+              }
+            } else if (time.value === 'B') {
+              if (new Date().getDay() === 0) {
+                if (new Date().getHours() >= 14) {
+                  time.a_disabled = true
+                  time.content = '时间段已过'
+                }
+              } else {
+                if (new Date().getHours() >= 13) {
+                  time.a_disabled = true
+                  time.content = '时间段已过'
+                }
+              }
+            } else if (time.value === 'C') {
+              if (new Date().getDay() === 0) {
+                if (new Date().getHours() >= 16) {
+                  time.a_disabled = true
+                  time.content = '时间段已过'
+                }
+              } else {
+                if (new Date().getHours() >= 15) {
+                  time.a_disabled = true
+                  time.content = '时间段已过'
+                }
+              }
+            } else if (time.value === 'D') {
+              if (new Date().getHours() >= 17) {
+                time.a_disabled = true
+                time.content = '时间段已过'
+              }
+            } else if (time.value === 'E') {
+              if (new Date().getHours() >= 19) {
+                time.a_disabled = true
+                time.content = '时间段已过'
+              }
+            }
+          })
+        }
       })
     }
   },
