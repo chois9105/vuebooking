@@ -66,10 +66,21 @@ export default {
         }
       }).then(action => {
         let hourNow = new Date().getHours() + 2
-        if (hourNow < 18) {
-          let params = {
-            status: 'cancelled',
-            reference_id: row.referenceId
+        // 这里还需要加一段逻辑，用于判定预订的时间段
+        // 判断该预订日期是否当前月
+        if (hourNow < 26) {
+          if (parseInt(row.date.split('-')[1]) === new Date().getMonth() + 1) {
+            var params = {
+              status: 'cancelled',
+              reference_id: row.referenceId,
+              is_current_month: true
+            }
+          } else {
+            params = {
+              status: 'cancelled',
+              reference_id: row.referenceId,
+              is_current_month: false
+            }
           }
           this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
             this.getUserBooking()
