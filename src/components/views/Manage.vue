@@ -124,6 +124,9 @@ export default {
               this.addNextToken(1)
             }
             this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
+              console.log('我打印了1' + this.tableData)
+              this.getUserBooking()
+              console.log('我打印了2' + this.tableData)
               this.$message({
                 type: 'success',
                 message: '取消成功'
@@ -157,6 +160,9 @@ export default {
             }
           }
           this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
+            console.log('我打印了1' + this.tableData)
+            this.getUserBooking()
+            console.log('我打印了2' + this.tableData)
             this.$message({
               type: 'success',
               message: '取消成功'
@@ -178,6 +184,7 @@ export default {
         status_reserved: 'reserved'
       }
       this.$http.get(api.user_booking, {params}).then(res => {
+        this.tableData = []
         res.data.forEach(element => {
           let date = element.booking_day
           let room = element.booking_room.name + element.booking_room.label
@@ -199,6 +206,7 @@ export default {
           } else if (element.booking_time === 'F') {
             time = '20:00 - 22:00'
           }
+          // this.tableData = []
           this.tableData.push({
             date,
             time,
