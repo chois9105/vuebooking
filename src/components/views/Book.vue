@@ -93,43 +93,36 @@ export default {
       timeInfos: [
         {
           value: 'A',
-          time: '10:00 - 12:00',
-          type: 'success',
+          time: '10:30 - 13:00',
+          type: 'primary',
           content: '可預訂',
           a_disabled: false
         },
         {
           value: 'B',
-          time: '12:00 - 14:00',
-          type: 'success',
+          time: '13:00 - 15:00',
+          type: 'primary',
           content: '可預訂',
           a_disabled: false
         },
         {
           value: 'C',
-          time: '14:00 - 16:00',
-          type: 'success',
+          time: '15:00 - 17:00',
+          type: 'primary',
           content: '可預訂',
           a_disabled: false
         },
         {
           value: 'D',
-          time: '16:00 - 18:00',
-          type: 'success',
+          time: '17:00 - 19:00',
+          type: 'primary',
           content: '可預訂',
           a_disabled: false
         },
         {
           value: 'E',
-          time: '18:00 - 20:00',
-          type: 'success',
-          content: '可預訂',
-          a_disabled: false
-        },
-        {
-          value: 'F',
-          time: '20:00 - 22:00',
-          type: 'success',
+          time: '19:00 - 21:00',
+          type: 'primary',
           content: '可預訂',
           a_disabled: false
         }
@@ -281,12 +274,20 @@ export default {
       })
     },
     getTimeInfo () {
-      // 初始化时间信息
+      var date = this.date
+      // 初始化时间按钮
       this.timeInfos.forEach(v => {
-        v.type = 'success'
+        v.type = 'primary'
         v.content = '可預訂'
+        v.a_disabled = false
+        if (v.value === 'A') {
+          v.time = '10:30 - 13:00'
+        } else if (v.value === 'B') {
+          v.time = '13:00 - 15:00'
+        } else if (v.value === 'C') {
+          v.time = '15:00 - 17:00'
+        }
       })
-      let date = this.date
       let params = {
         booked_room: this.roomId,
         booked_day:
@@ -298,9 +299,8 @@ export default {
       }
       this.$http.get(api.booking, { params }).then(res => {
         // 初始化每个按钮的可选状态
-        this.timeInfos.forEach(time => {
-          time.a_disabled = false
-        })
+        // this.timeInfos.forEach(time => {
+        // })
         // 处理booking的返回数据
         res.data.forEach(element => {
           // 把预定时间段的type设置为info,content设置为“已預訂”并显示预定人的名字
@@ -321,11 +321,51 @@ export default {
             timeInfo.content = '缺席<br>預訂人：' + element.booking_user.name
           }
         })
-        // 如果是G房，小于5的用户全部不可选
+        // 如果是周六，A段显示时间改变,E段时间不可选
+        if (date.getDay() === 6) {
+          this.timeInfos.forEach(timeInfo => {
+            if (timeInfo.value === 'A') {
+              timeInfo.time = '11:00 - 13:00'
+            } else if (timeInfo.value === 'E') {
+              timeInfo.a_disabled = true
+              timeInfo.content = '该时段星期六不可选'
+            }
+          })
+        } else if (date.getDay() === 0) {
+          // 如果是周日，每个时间段显示改变,切DE不可选
+          this.timeInfos.forEach(timeInfo => {
+            if (timeInfo.value === 'A') {
+              timeInfo.time = '12:00 - 14:00'
+            } else if (timeInfo.value === 'B') {
+              timeInfo.time = '14:00 - 16:00'
+            } else if (timeInfo.value === 'C') {
+              timeInfo.time = '16:00 - 18:00'
+            } else if (timeInfo.value === 'D') {
+              timeInfo.a_disabled = true
+              timeInfo.content = '该时段星期天不可选'
+            } else if (timeInfo.value === 'E') {
+              timeInfo.a_disabled = true
+              timeInfo.content = '该时段星期天不可选'
+            }
+          })
+        }
+        // 如果是G房，小于5的用户全部不可选，工作日AB段时间不可选
         if (this.roomId === '7') {
+          if (date.getDay() >= 1 && date.getDay() <= 5) {
+            this.timeInfos.forEach(time => {
+              if (time.value === 'A') {
+                time.a_disabled = true
+                time.content = '工作日该时段不可选'
+              } else if (time.value === 'B') {
+                time.a_disabled = true
+                time.content = '工作日该时段不可选'
+              }
+            })
+          }
           if (this.level !== '5') {
             this.timeInfos.forEach(time => {
               time.a_disabled = true
+              time.content = '不可选'
             })
           }
         }
@@ -338,3 +378,7 @@ export default {
   }
 }
 </script>
+
+<style>
+
+</style>
