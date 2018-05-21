@@ -1,9 +1,17 @@
 <template>
     <el-table :data="tableData" style="width: 100%">
-    <el-table-column width="400px" label="预订信息">
+    <el-table-column width="200px" prop="booking_day" label="预订日期">
       <template slot-scope="scope">
         <span class="info_span"><i class="el-icon-date"></i>{{ scope.row.date }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column width="200px" prop="booking_time" label="预订时间">
+      <template slot-scope="scope">
         <span class="info_span"><i class="el-icon-time"></i>{{ scope.row.time }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column width="200px" prop="booking_room" label="预订房间">
+      <template slot-scope="scope">
         <span class="info_span"><i class="el-icon-location"></i>{{ scope.row.room }}</span>
       </template>
     </el-table-column>
@@ -14,7 +22,7 @@
     </el-table-column>
     <el-table-column width="200px" label="选择取消">
       <template slot-scope="scope">
-        <el-button size="mini" type="danger" style="float:left;" @click="confirm">取消预订</el-button>
+        <el-button size="mini" type="danger" style="float:left;" :disabled="c_disabled" @click="cancel(scope.row)">取消预订</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -25,18 +33,19 @@ import api from '@/utils/api'
 export default {
   data () {
     return {
-      tableData: []
+      tableData: [],
+      c_disabled: false
     }
   },
   methods: {
-    confirm () {
+    cancel (row) {
       const h = this.$createElement
       this.$msgbox({
         title: '確認取消該預定？',
         message: h('p', null, [
-          h('span', null, ' 2018-5-11  '),
-          h('span', null, ' 10:00 - 12:00  '),
-          h('i', { style: 'color: teal' }, '  大型會議室A')
+          h('span', null, ' ' + row.date + '  '),
+          h('span', null, ' ' + row.time + '  '),
+          h('i', { style: 'color: teal' }, '  ' + row.room)
         ]),
         showCancelButton: true,
         confirmButtonText: '确定',
@@ -49,28 +58,53 @@ export default {
               done()
               setTimeout(() => {
                 instance.confirmButtonLoading = false
-              }, 300)
-            }, 3000)
+              }, 150)
+            }, 1000)
           } else {
             done()
           }
         }
       }).then(action => {
-        this.$message({
-          type: 'info',
-          message: 'action: ' + action
-        })
+        let hourNow = new Date().getHours() + 2
+        if (hourNow < 18) {
+          let params = {
+            status: 'cancelled',
+            reference_id: row.referenceId
+          }
+          this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
+            this.getUserBooking()
+            this.$message({
+              type: 'success',
+              message: '取消成功'
+            })
+            //
+          }).catch(err => {
+            console.log(err)
+            this.$message({
+              type: 'error',
+              message: '取消失败'
+            })
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: '现在不可取消'
+          })
+        }
       })
     },
     getUserBooking () {
+      console.log('我被调用啦')
       let params = {
         status_reserved: 'reserved'
       }
       this.$http.get(api.user_booking, {params}).then(res => {
-        console.log(res.data)
         res.data.forEach(element => {
           let date = element.booking_day
           let room = element.booking_room.name + element.booking_room.label
+          let roomId = element.booking_room.id
+          let referenceId = element.reference_id
+          let timeLabel = element.booking_time
           // 根据预订的时间段显示
           if (element.booking_time === 'A') {
             var time = '10:00 - 12:00'
@@ -88,7 +122,10 @@ export default {
           this.tableData.push({
             date,
             time,
-            room
+            room,
+            roomId,
+            referenceId,
+            timeLabel
           })
         })
       })
@@ -102,6 +139,6 @@ export default {
 
 <style>
 .info_span {
-  display: block;
+  float: left;
 }
 </style>

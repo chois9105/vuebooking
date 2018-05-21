@@ -139,9 +139,7 @@ export default {
           return time.getTime() < Date.now() - 24 * 3600 * 1000
         }
       },
-      // 时间
       date: new Date(),
-      // 房间id
       roomId: '1',
       selected_time: '',
       selected_time_value: ''
@@ -313,9 +311,6 @@ export default {
             timeInfo.type = 'info'
             timeInfo.a_disabled = true
             timeInfo.content = '已預訂<br>預訂人：' + element.booking_user.name
-          } else if (element.status === 'cancelled') {
-            timeInfo.type = 'warning'
-            timeInfo.content = '已取消<br>預訂人：' + element.booking_user.name
           } else if (element.status === 'show') {
             timeInfo.type = 'info'
             timeInfo.a_disabled = true
