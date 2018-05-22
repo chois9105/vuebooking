@@ -40,9 +40,11 @@ let router = new Router({
   ],
   mode: 'history'
 })
-
+// 路由检测，如果没有登录记录则调回登录页面
 router.beforeEach((to, from, next) => {
-  console.log('beforeEach')
+  if (!localStorage.token && to.name !== 'login') {
+    router.push({name: 'login'})
+  }
   next()
 })
 

@@ -30,12 +30,15 @@
 
 <script>
 import api from '@/utils/api'
-import {mapActions} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 export default {
   data () {
     return {
       tableData: []
     }
+  },
+  computed: {
+    ...mapState('user', ['current_token', 'next_token', 'level'])
   },
   methods: {
     ...mapActions('user', ['addCurrentToken', 'addNextToken']),
@@ -154,12 +157,16 @@ export default {
               reference_id: row.referenceId,
               is_current_month: true
             }
+            // 即時補回當月代幣
+            this.addCurrentToken(1)
           } else {
             params = {
               status: 'cancelled',
               reference_id: row.referenceId,
               is_current_month: false
             }
+            // 即時補回下月代幣
+            this.addNextToken(1)
           }
           this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
             this.getUserBooking()

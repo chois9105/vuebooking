@@ -201,7 +201,7 @@ export default {
               done()
               setTimeout(() => {
                 instance.confirmButtonLoading = false
-              }, 200)
+              }, 100)
             }, 1000)
           } else {
             done()
@@ -232,7 +232,7 @@ export default {
               this.minusCurrentToken(1)
               this.$message({
                 type: 'success',
-                message: '预订成功！'
+                message: '預訂成功！'
               })
             }).catch(err => {
               // 預訂失敗則是因為reference_id不唯一，即可能已經被人預訂
@@ -249,7 +249,7 @@ export default {
               message: '预订失败,当前月代币不足'
             })
           }
-        } else {
+        } else if (parseInt(date.split('-')[1]) === new Date().getMonth() + 2) {
           // 如果是下月，則is_current_month為false，並且判斷下月代幣是否足夠
           if (this.next_token > 0) {
             let params = {
@@ -257,6 +257,7 @@ export default {
               booking_day: date,
               booking_time: this.selected_time_value,
               reference_id: bookingId,
+              booking_weekday: this.date.getDay(),
               is_current_month: false
             }
             this.$http.post(api.user_booking, params).then(res => {
@@ -277,10 +278,16 @@ export default {
           } else {
             // 如果下月代幣不足，則顯示提醒消息
             this.$message({
-              type: 'waring',
+              type: 'error',
               message: '预订失败,下月代币不足'
             })
           }
+        } else {
+          // 超出下個月範圍
+          this.$message({
+            type: 'error',
+            message: '抱歉，目前不可預訂該日期'
+          })
         }
       })
     },
