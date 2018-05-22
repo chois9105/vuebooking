@@ -22,7 +22,7 @@
     </el-table-column>
     <el-table-column width="200px" label="选择取消">
       <template slot-scope="scope">
-        <el-button size="mini" type="danger" style="float:left;" :disabled="c_disabled" @click="cancel(scope.row)">取消预订</el-button>
+        <el-button size="mini" type="danger" style="float:left;" @click="confirmCancel(scope.row)">取消预订</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -30,20 +30,17 @@
 
 <script>
 import api from '@/utils/api'
-import {mapState, mapActions} from 'vuex'
+import {mapActions} from 'vuex'
 export default {
   data () {
     return {
-      tableData: [],
-      c_disabled: false
+      tableData: []
     }
-  },
-  computed: {
-    ...mapState('user', ['current_token', 'next_token', 'level'])
   },
   methods: {
     ...mapActions('user', ['addCurrentToken', 'addNextToken']),
-    cancel (row) {
+    // 提交取消請求
+    confirmCancel (row) {
       const h = this.$createElement
       this.$msgbox({
         title: '確認取消該預定？',
@@ -53,12 +50,12 @@ export default {
           h('i', { style: 'color: teal' }, '  ' + row.room)
         ]),
         showCancelButton: true,
-        confirmButtonText: '确定',
+        confirmButtonText: '確定',
         cancelButtonText: '取消',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
+            instance.confirmButtonText = '請稍等...'
             setTimeout(() => {
               done()
               setTimeout(() => {
@@ -70,9 +67,15 @@ export default {
           }
         }
       }).then(action => {
+        // 用於判斷當前時間是否小於想要取消預訂的時間前2小時
         let hourNow = new Date().getHours() + 2
         let minuteNow = new Date().getMinutes
-        // 这里还需要加一段逻辑，用于判定预订的时间段
+        let choseDay = row.date
+        let today = new Date().getFullYear() +
+                    '-' +
+                    String(new Date().getMonth() + 1).padStart(2, '00') +
+                    '-' +
+                    new Date().getDate()
         if (row.timeLabel === 'A') {
           if (row.weekDay === 6) {
             var bookTime = 11
@@ -98,35 +101,33 @@ export default {
         } else if (row.timeLabel === 'E') {
           bookTime = 19
         }
-        // 如果是当天的取消操作，则需要判定取消的预订是否大于2小时
-        var choseDay = row.date
-        var today = new Date().getFullYear() +
-                    '-' +
-                    String(new Date().getMonth() + 1).padStart(2, '00') +
-                    '-' +
-                    new Date().getDate()
         if (choseDay === today) {
+          // 取消的預訂日期為當日，則需判斷是否大於預訂時間前兩小時
           if (hourNow < bookTime || (hourNow === 10 && minuteNow < 30)) {
             // 判断该预订日期是否当前月
             if (parseInt(row.date.split('-')[1]) === new Date().getMonth() + 1) {
+              // 準備更新請求參數，若為當月則is_current_month為true
               var params = {
                 status: 'cancelled',
                 reference_id: row.referenceId,
                 is_current_month: true
               }
+              // 即時補回當月代幣
               this.addCurrentToken(1)
             } else {
+              // 若為下月則is_current_month為false
               params = {
                 status: 'cancelled',
                 reference_id: row.referenceId,
                 is_current_month: false
               }
+              // 即時補回下月代幣
               this.addNextToken(1)
             }
+            // 提交取消請求
             this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
-              console.log('我打印了1' + this.tableData)
+              // 重新獲取用戶預訂記錄以刷新列表
               this.getUserBooking()
-              console.log('我打印了2' + this.tableData)
               this.$message({
                 type: 'success',
                 message: '取消成功'
@@ -135,17 +136,18 @@ export default {
               console.log(err)
               this.$message({
                 type: 'error',
-                message: '取消失败'
+                message: '取消失敗'
               })
             })
           } else {
             this.$message({
               type: 'error',
-              message: '现在不可取消'
+              message: '現在不可取消'
             })
           }
         } else {
           // 如果不是当天就不需要判断大于两小时
+          // 判断该预订日期是否当前月，如上
           if (parseInt(row.date.split('-')[1]) === new Date().getMonth() + 1) {
             params = {
               status: 'cancelled',
@@ -160,9 +162,7 @@ export default {
             }
           }
           this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
-            console.log('我打印了1' + this.tableData)
             this.getUserBooking()
-            console.log('我打印了2' + this.tableData)
             this.$message({
               type: 'success',
               message: '取消成功'
@@ -172,41 +172,55 @@ export default {
             console.log(err)
             this.$message({
               type: 'error',
-              message: '取消失败'
+              message: '取消失敗'
             })
           })
         }
       })
     },
+    // 獲取用戶預訂記錄
     getUserBooking () {
-      console.log('我被调用啦')
       let params = {
         status_reserved: 'reserved'
       }
       this.$http.get(api.user_booking, {params}).then(res => {
+        // 初始化數據列表
         this.tableData = []
-        res.data.forEach(element => {
-          let date = element.booking_day
-          let room = element.booking_room.name + element.booking_room.label
-          let roomId = element.booking_room.id
-          let referenceId = element.reference_id
-          let timeLabel = element.booking_time
-          let weekDay = element.booking_weekday
-          // 根据预订的时间段显示
-          if (element.booking_time === 'A') {
-            var time = '10:00 - 12:00'
-          } else if (element.booking_time === 'B') {
-            time = '12:00 - 14:00'
-          } else if (element.booking_time === 'C') {
-            time = '14:00 - 16:00'
-          } else if (element.booking_time === 'D') {
-            time = '16:00 - 18:00'
-          } else if (element.booking_time === 'E') {
-            time = '18:00 - 20:00'
-          } else if (element.booking_time === 'F') {
-            time = '20:00 - 22:00'
+        res.data.forEach(el => {
+          let date = el.booking_day
+          let room = el.booking_room.name + el.booking_room.label
+          let roomId = el.booking_room.id
+          let referenceId = el.reference_id
+          let timeLabel = el.booking_time
+          let weekDay = el.booking_weekday
+          // 根據周幾賦予不同時間段
+          let timeCommonValue = {
+            A: '10:30 - 13:00',
+            B: '13:00 - 15:00',
+            C: '15:00 - 17:00',
+            D: '17:00 - 19:00',
+            E: '19:00 - 21:00'
           }
-          // this.tableData = []
+          let timeSatValue = {
+            A: '11:00 - 13:00'
+          }
+          let timeSunValue = {
+            A: '12:00 - 14:00',
+            B: '14:00 - 16:00',
+            C: '16:00 - 18:00'
+          }
+          // 根据预订的时间段显示
+          if (weekDay === 6) {
+            if (el.booking_time === 'A') {
+              var time = timeSatValue[el.booking_time]
+            } else {
+              time = timeCommonValue[el.booking_time]
+            }
+          } else if (weekDay === 0) {
+            time = timeSunValue[el.booking_time]
+          } else {
+            time = timeCommonValue[el.booking_time]
+          }
           this.tableData.push({
             date,
             time,
