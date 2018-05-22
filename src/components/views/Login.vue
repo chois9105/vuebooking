@@ -55,7 +55,7 @@ export default {
         ],
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'},
-          {min: 6, max: 16, message: '请输入长度在6-8位的密码', trigger: 'blur'}
+          {min: 6, max: 16, message: '请输入长度6位的密码', trigger: 'blur'}
         ]
       }
     }
@@ -68,11 +68,8 @@ export default {
       }
       if (params.username && params.password) {
         this.$http.post(api.login, params).then(res => {
-        // 登录成功
-          console.log(res.data)
           if (res.data.token) {
             localStorage.token = res.data.token
-            console.log('token is storaged')
           }
           this.$router.push({name: 'home'})
         }).catch(function (error) {
