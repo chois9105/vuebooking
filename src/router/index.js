@@ -8,7 +8,7 @@ import history from '@/components/views/History'
 
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   routes: [
     {
       path: '/',
@@ -39,12 +39,11 @@ export default new Router({
     }
   ],
   mode: 'history'
-}).beforeEach((to, from, next) => {
-  // 会在任意路由跳转前执行，next一定要记着执行，不然路由不能跳转了
+})
+
+router.beforeEach((to, from, next) => {
   console.log('beforeEach')
-  console.log(to, from)
-  // if (localStorage.token === null) {
-  //   this.$router.push({name: 'login'})
-  // }
   next()
 })
+
+export default router
