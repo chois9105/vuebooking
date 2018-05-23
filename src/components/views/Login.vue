@@ -63,6 +63,7 @@ export default {
   },
   methods: {
     onSubmit () {
+      var that = this
       const params = {
         username: this.loginForm.username,
         password: this.loginForm.password
@@ -74,8 +75,9 @@ export default {
           }
           this.$router.push({name: 'home'})
         }).catch(function (error) {
+          console.log(error)
           if ('non_field_errors' in error) {
-            this.loginForm.userError = error.non_field_errors[0]
+            that.loginForm.userError = 'FBO ID 或 密碼錯誤'
           }
         })
       }
