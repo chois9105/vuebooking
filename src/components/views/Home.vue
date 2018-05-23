@@ -42,7 +42,8 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+// import api from '@/utils/api'
+import { getUserDetail } from '../../utils/api'
 import {mapState, mapActions} from 'vuex'
 export default {
   data () {
@@ -58,7 +59,7 @@ export default {
   methods: {
     ...mapActions('user', ['changeUserInfo']),
     getuserInfo () {
-      this.$http.get(api.user_detail).then(res => {
+      getUserDetail().then(res => {
         this.name = res.data.name
         this.fbo_id = res.data.fbo_id
         this.changeUserInfo({

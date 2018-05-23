@@ -29,7 +29,8 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+// import api from '@/utils/api'
+import { updateBooking, getUserBooking } from '../../utils/api'
 import {mapState, mapActions} from 'vuex'
 export default {
   data () {
@@ -128,7 +129,7 @@ export default {
               this.addNextToken(1)
             }
             // 提交取消請求
-            this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
+            updateBooking(row.referenceId, params).then(res => {
               // 重新獲取用戶預訂記錄以刷新列表
               this.getUserBooking()
               this.$message({
@@ -168,7 +169,7 @@ export default {
             // 即時補回下月代幣
             this.addNextToken(1)
           }
-          this.$http.put(api.user_booking + row.referenceId + '/', params).then(res => {
+          updateBooking(row.referenceId, params).then(res => {
             this.getUserBooking()
             this.$message({
               type: 'success',
@@ -190,7 +191,7 @@ export default {
       let params = {
         status_reserved: 'reserved'
       }
-      this.$http.get(api.user_booking, {params}).then(res => {
+      getUserBooking(params).then(res => {
         // 初始化數據列表
         this.tableData = []
         res.data.forEach(el => {

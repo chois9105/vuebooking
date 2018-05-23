@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+// import api from '@/utils/api'
+import { getBookingList, submitBooking } from '../../utils/api'
 import {mapState, mapActions} from 'vuex'
 export default {
   data () {
@@ -227,7 +228,7 @@ export default {
               reference_id: bookingId,
               is_current_month: true
             }
-            this.$http.post(api.user_booking, params).then(res => {
+            submitBooking(params).then(res => {
               // 預訂成功則及時扣除當月代幣
               this.minusCurrentToken(1)
               this.$message({
@@ -260,7 +261,7 @@ export default {
               booking_weekday: this.date.getDay(),
               is_current_month: false
             }
-            this.$http.post(api.user_booking, params).then(res => {
+            submitBooking(params).then(res => {
               // 預訂成功則及時扣除下月代幣
               this.minusNextToken(1)
               this.$message({
@@ -307,7 +308,7 @@ export default {
           date.getDate()
       }
       // 請求滿足篩選條件的所有預訂記錄
-      this.$http.get(api.booking, { params }).then(res => {
+      getBookingList(params).then(res => {
         res.data.forEach(el => {
           // 將獲取到的預訂記錄賦值給對應時間段
           let timeInfo = this.timeInfos.find(

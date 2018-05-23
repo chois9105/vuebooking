@@ -38,7 +38,8 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+// import api from '@/utils/api'
+import { login } from '../../utils/api'
 export default {
   data () {
     return {
@@ -67,7 +68,7 @@ export default {
         password: this.loginForm.password
       }
       if (params.username && params.password) {
-        this.$http.post(api.login, params).then(res => {
+        login(params).then(res => {
           if (res.data.token) {
             localStorage.token = res.data.token
           }

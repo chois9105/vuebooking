@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+// import api from '@/utils/api'
+import { getUserBooking } from '../../utils/api'
 export default {
   data () {
     return {
@@ -37,7 +38,7 @@ export default {
       let params = {
         status_not_reserved: 'reserved'
       }
-      this.$http.get(api.user_booking, {params}).then(res => {
+      getUserBooking(params).then(res => {
         // 初始化數據列表
         this.tableData = []
         res.data.forEach(el => {
