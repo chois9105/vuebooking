@@ -17,12 +17,20 @@
     </el-table-column>
     <el-table-column width="200px" label="预订状态">
       <template slot-scope="scope">
-        <el-button size="mini" type="success" style="float:left;">已预订</el-button>
+        <el-button type="success" size="medium" @click="dialogVisible = true" style="float: left">已預訂</el-button>
+        <el-dialog
+          title="簽到二維碼"
+          :visible.sync="dialogVisible"
+          width="30%">
+          <img :src="scope.row.imageUrl">
+          <span slot="footer" class="dialog-footer">
+          </span>
+        </el-dialog>
       </template>
     </el-table-column>
     <el-table-column width="200px" label="选择取消">
       <template slot-scope="scope">
-        <el-button size="mini" type="danger" style="float:left;" @click="confirmCancel(scope.row)">取消预订</el-button>
+        <el-button size="medium" type="danger" style="float:left;" @click="confirmCancel(scope.row)">取消预订</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -35,7 +43,8 @@ import {mapState, mapActions} from 'vuex'
 export default {
   data () {
     return {
-      tableData: []
+      tableData: [],
+      dialogVisible: false
     }
   },
   computed: {
@@ -201,6 +210,7 @@ export default {
           let referenceId = el.reference_id
           let timeLabel = el.booking_time
           let weekDay = el.booking_weekday
+          let imageUrl = el.qr_code
           // 根據周幾賦予不同時間段
           let timeCommonValue = {
             A: '10:30 - 13:00',
@@ -236,7 +246,8 @@ export default {
             roomId,
             referenceId,
             timeLabel,
-            weekDay
+            weekDay,
+            imageUrl
           })
         })
       })

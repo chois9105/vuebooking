@@ -1,6 +1,10 @@
 import axios from 'axios'
 
-let host = 'http://flpbooking.applinzi.com'
+// 生产环境
+// let host = 'http://flpbooking.applinzi.com'
+
+// 开发环境
+let host = 'http://127.0.0.1:8000'
 
 // 登录
 export const login = params => {
@@ -22,9 +26,14 @@ export const submitBooking = params => {
   return axios.post(`${host}/user_booking/`, params)
 }
 
-// 更新预订
+// 更新预订(取消)
 export const updateBooking = (referenceId, params) => {
   return axios.put(`${host}/user_booking/` + referenceId + '/', params)
+}
+
+// 更新预订(出席)
+export const checkInBooking = (referenceId, params) => {
+  return axios.put(`${host}/user_checking/` + referenceId + '/', params)
 }
 
 // 获取用户预订

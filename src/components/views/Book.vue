@@ -1,6 +1,9 @@
 <template>
-    <el-tabs type="border-card" v-model="roomId" tab-position="top" @tab-click="handleRoomChange">
-      <el-tab-pane v-for="(room, index) in rooms" :label="room.label" :key="index" :name="room.id">
+    <el-tabs type="border-card" v-model="roomId" tab-position="left" @tab-click="handleRoomChange">
+      <el-tab-pane v-for="(room, index) in rooms"
+                  :label="room.label"
+                  :key="index"
+                  :name="room.id">
           <el-card class="box-card">
               <div slot="header">
                   <div>{{roomNow}}</div>
@@ -13,7 +16,7 @@
                     @change="handleDateChange"
                   ></el-date-picker>
               </div>
-              <el-row :gutter="20">
+              <el-row :gutter="150">
                 <el-col :span="4" v-for="(timeInfo, index) in timeInfos" :key="index">
                   <el-tooltip class="item" effect="light" placement="bottom">
                     <div slot="content" v-html="timeInfo.content"></div>
@@ -24,7 +27,7 @@
               </el-row>
               <el-row>
                 <el-col :span="8" :offset="8">
-                  <el-button type="success" @click="confirmBook">點擊預定</el-button>
+                  <el-button type="primary" size="medium" @click="confirmBook">點擊預定</el-button>
                 </el-col>
               </el-row>
           </el-card>
@@ -485,5 +488,7 @@ export default {
 </script>
 
 <style>
-
+.el-card {
+  margin-top: 50px
+}
 </style>

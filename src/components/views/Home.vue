@@ -1,8 +1,14 @@
 <template>
-    <el-container style="height: 500px;">
+    <el-container style="height: 800px;">
         <el-header height="180px">
             <el-row>
-                <el-col :span="6"><div style="float: left;">Service: 23699638</div></el-col>
+                <el-col :span="6"><div style="float: left;color: #fff">客服熱線: 23699638</div></el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="6"><img src='../../assets/2018_New_Logo.png'
+                                      height="200px"
+                                      width="200px"></el-col>
+                <el-col :span="12"><div class="home-title">尖沙咀預訂會議房間系統</div></el-col>
                 <el-col :span="6" :offset="12">
                     <el-popover
                       placement="bottom"
@@ -18,23 +24,22 @@
                     </el-popover>
                 </el-col>
             </el-row>
-            <el-row :gutter="20">
-                <el-col :span="6"><div class="">LOGO</div></el-col>
-                <el-col :span="6"><div style="float: left;">Booking Online</div></el-col>
-            </el-row>
         </el-header>
         <el-container>
             <el-aside>
-                <el-menu :router="isRoute">
+                <el-menu :router="isRoute"
+                        background-color="#949d9e"
+                        active-text-color="#ffd04b"
+                        text-color="#fff">
                     <el-menu-item index="/book">
-                      <template slot="title">Room Booking</template></el-menu-item>
+                      <template slot="title">預訂會議室</template></el-menu-item>
                     <el-menu-item index="/manage">
-                      <template slot="title">Manage Booking</template></el-menu-item>
+                      <template slot="title">管理預訂</template></el-menu-item>
                     <el-menu-item index="/history">
-                      <template slot="title">View Booking</template></el-menu-item>
+                      <template slot="title">查看歷史預訂</template></el-menu-item>
                 </el-menu>
             </el-aside>
-            <el-main>
+            <el-main >
               <router-view></router-view>
             </el-main>
         </el-container>
@@ -81,6 +86,16 @@ export default {
 </script>
 
 <style>
+
+body {
+  background-image: url('../../assets/bg2.jpg')
+}
+.home-title {
+  /* float: left; */
+  font-size: 45px;
+  color: aliceblue
+}
+
 .el-row{
   margin-bottom: 20px;
 }
@@ -89,22 +104,17 @@ export default {
     background: #d3dce6;
 }
 
-.el-header, .el-footer {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-  }
-
   .el-aside {
-    color: #333;
+    background-color: "#545c64";
     text-align: center;
     line-height: 200px;
+    margin-top: 60px
   }
 
   .el-main {
     color: #333;
     text-align: center;
+    margin-top: 40px
   }
 
   body > .el-container {

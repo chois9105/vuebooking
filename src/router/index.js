@@ -5,6 +5,7 @@ import Home from '@/components/views/Home'
 import Book from '@/components/views/Book'
 import Manage from '@/components/views/Manage'
 import history from '@/components/views/History'
+import CheckIn from '@/components/views/CheckIn'
 
 Vue.use(Router)
 
@@ -36,9 +37,15 @@ let router = new Router({
           component: history
         }
       ]
+    },
+    {
+      path: '/checkIn',
+      name: 'checkIn',
+      component: CheckIn
     }
   ],
-  mode: 'history'
+  mode: 'history',
+  base: '/dist/'
 })
 // 路由检测，如果没有登录记录则调回登录页面
 router.beforeEach((to, from, next) => {
